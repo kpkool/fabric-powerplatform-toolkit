@@ -1,0 +1,5 @@
+# Runtime evidence can contain customer tenant, network, endpoint, and correlation data.
+evidence/
+customer-evidence/
+power-platform-vnet-*.json
+power-platform-vnet-*.log
