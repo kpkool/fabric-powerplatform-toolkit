@@ -37,6 +37,39 @@ function Get-PropertyValue {
     return $null
 }
 
+function Test-IsAccessTokenArrayBindingError {
+    param(
+        [Parameter(Mandatory)]
+        [System.Management.Automation.ErrorRecord]$ErrorRecord
+    )
+
+    $message = $ErrorRecord.Exception.Message
+    return (
+        $message -match "parameter 'AccessToken'" -and
+        $message -match 'System\.Object\[\]' -and
+        $message -match 'System\.Security\.SecureString'
+    )
+}
+
+function Invoke-PowerPlatformReadOnlyCommand {
+    param(
+        [Parameter(Mandatory)]
+        [scriptblock]$Action
+    )
+
+    try {
+        return @(& $Action)
+    }
+    catch {
+        if (-not (Test-IsAccessTokenArrayBindingError -ErrorRecord $_)) {
+            throw
+        }
+
+        Write-Warning 'Power Platform authentication completed but returned an invalid token wrapper. Retrying this read-only command once.'
+        return @(& $Action)
+    }
+}
+
 function Get-InjectionStatus {
     $parameters = @{
         EnvironmentId = $EnvironmentId
@@ -46,10 +79,17 @@ function Get-InjectionStatus {
     if ($ForceAuth) { $parameters.ForceAuth = $true }
 
     try {
-        $region = @(Get-EnvironmentRegion @parameters | Where-Object { $_ -is [string] }) |
+        $region = @(
+            Invoke-PowerPlatformReadOnlyCommand -Action {
+                Get-EnvironmentRegion @parameters
+            } |
+                Where-Object { $_ -is [string] }
+        ) |
             Select-Object -Last 1
         $policy = @(
-            Get-SubnetInjectionEnterprisePolicy @parameters |
+            Invoke-PowerPlatformReadOnlyCommand -Action {
+                Get-SubnetInjectionEnterprisePolicy @parameters
+            } |
                 Where-Object {
                     $null -ne $_ -and
                     $_ -isnot [string] -and

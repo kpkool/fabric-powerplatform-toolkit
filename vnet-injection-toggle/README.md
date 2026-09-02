@@ -53,6 +53,12 @@ When linked, the output includes `InjectionLinked: True`, the policy name, ARM
 ID, kind, and reported health. If the lookup fails, the script throws the original
 module error instead of reporting a false disabled state.
 
+Some versions of `Microsoft.PowerPlatform.EnterprisePolicies` emit an invalid
+`Object[]` token wrapper immediately after the first interactive sign-in. The
+script retries that exact error once for the read-only `Status` lookup. It never
+automatically retries `Enable` or `Disable`; run `Status` successfully in the
+same PowerShell process before either approved change.
+
 ## Enable Injection
 
 The policy ARM ID has this form:

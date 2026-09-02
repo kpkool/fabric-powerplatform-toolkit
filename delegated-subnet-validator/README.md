@@ -96,6 +96,40 @@ geography names such as `unitedstates`.
 If the script needs to force a fresh Power Platform authentication session, add
 `-ForceAuth`.
 
+## First-Login AccessToken Error
+
+Some versions of `Microsoft.PowerPlatform.EnterprisePolicies` can return this
+error immediately after an interactive sign-in:
+
+```text
+Cannot convert the "System.Object[]" value of type "System.Object[]" to type
+"System.Security.SecureString" for parameter "AccessToken".
+```
+
+This is a module authentication-output error. It occurs before the diagnostic
+HTTP request is created, so it does not prove an invalid environment ID, a
+permission failure, or a blocked network path. The interactive sign-in usually
+completed and cached the required token; rerunning the same read-only cmdlet in
+the same PowerShell process should then use that token.
+
+The validator detects only this exact binding error and retries the affected
+read-only command once. Other errors are not retried. When testing the Microsoft
+cmdlet directly, rerun the identical command once after `Logged In...`:
+
+```powershell
+Get-EnvironmentRegion `
+  -EnvironmentId $environmentId `
+  -TenantId $tenantId
+```
+
+If the second attempt fails, retain the complete second error and record the
+loaded versions before troubleshooting permissions or networking:
+
+```powershell
+Get-Module Microsoft.PowerPlatform.EnterprisePolicies, Az.Accounts |
+  Select-Object Name, Version, Path
+```
+
 ## Expected Output
 
 The script writes two files:
@@ -190,6 +224,8 @@ The script does not prove:
 
 ## Official Documentation
 
+- [Get-EnvironmentRegion](https://learn.microsoft.com/powershell/module/microsoft.powerplatform.enterprisepolicies/get-environmentregion)
+- [Protect secrets in Azure PowerShell](https://learn.microsoft.com/powershell/azure/protect-secrets)
 - [Troubleshoot virtual network issues in Power Platform](https://learn.microsoft.com/troubleshoot/power-platform/administration/virtual-network)
 - [Power Platform virtual network support overview](https://learn.microsoft.com/power-platform/admin/vnet-support-overview)
 - [Microsoft Fabric Warehouse connectivity](https://learn.microsoft.com/fabric/data-warehouse/connectivity)

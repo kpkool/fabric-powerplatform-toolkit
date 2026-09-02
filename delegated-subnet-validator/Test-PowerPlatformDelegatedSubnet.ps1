@@ -24,6 +24,39 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $script:diagnosticErrors = [System.Collections.Generic.List[object]]::new()
 
+function Test-IsAccessTokenArrayBindingError {
+    param(
+        [Parameter(Mandatory)]
+        [System.Management.Automation.ErrorRecord]$ErrorRecord
+    )
+
+    $message = $ErrorRecord.Exception.Message
+    return (
+        $message -match "parameter 'AccessToken'" -and
+        $message -match 'System\.Object\[\]' -and
+        $message -match 'System\.Security\.SecureString'
+    )
+}
+
+function Invoke-PowerPlatformCommand {
+    param(
+        [Parameter(Mandatory)]
+        [scriptblock]$Action
+    )
+
+    try {
+        return @(& $Action)
+    }
+    catch {
+        if (-not (Test-IsAccessTokenArrayBindingError -ErrorRecord $_)) {
+            throw
+        }
+
+        Write-Warning 'Power Platform authentication completed but returned an invalid token wrapper. Retrying this read-only command once.'
+        return @(& $Action)
+    }
+}
+
 function Invoke-EvidenceStep {
     param(
         [Parameter(Mandatory)]
@@ -35,7 +68,7 @@ function Invoke-EvidenceStep {
 
     Write-Host "`n=== $Name ==="
     try {
-        $result = @(& $Action)
+        $result = @(Invoke-PowerPlatformCommand -Action $Action)
         $result | Format-List * | Out-Host
         [pscustomobject]@{
             Succeeded = $true
