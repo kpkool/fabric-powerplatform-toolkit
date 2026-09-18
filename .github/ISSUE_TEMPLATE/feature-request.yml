@@ -1,0 +1,51 @@
+name: Feature request
+description: Propose a reusable validation, safety, or documentation improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Explain the reusable outcome, not a customer-specific implementation. Use synthetic examples and keep sensitive details out of this public issue.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the general workflow or evidence gap.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe what a user should be able to prove or complete.
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Scope and proof boundary
+      description: State what the feature should and should not change or validate.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Note existing commands, tools, or documentation that are close but insufficient.
+  - type: input
+    id: source
+    attributes:
+      label: Relevant official source
+      description: Link current Microsoft documentation when the proposal depends on product behavior.
+      placeholder: https://learn.microsoft.com/...
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: This proposal uses placeholders and contains no customer data, credentials, endpoints, logs, or diagnostic evidence.
+          required: true
+        - label: The proposal preserves read-only defaults or identifies confirmation, `-WhatIf`, and rollback needs for state changes.
+          required: true

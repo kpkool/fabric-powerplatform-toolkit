@@ -1,0 +1,45 @@
+name: Documentation correction
+description: Report an unclear, outdated, incomplete, or incorrect statement.
+title: "[Docs]: "
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Documentation corrections are especially useful as Fabric and Power Platform evolve. Do not include customer identifiers, endpoints, screenshots, logs, or evidence.
+  - type: input
+    id: location
+    attributes:
+      label: Document location
+      description: Provide the repository path, heading, or public URL.
+      placeholder: docs/setup/managed-environment-to-fabric-warehouse.md, Network Controls
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What needs correction?
+      description: Explain why the current text is unclear or inaccurate.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed correction
+      description: Suggest concise replacement text when possible.
+  - type: input
+    id: source
+    attributes:
+      label: Official source
+      description: Link the current Microsoft Learn page that supports the correction.
+      placeholder: https://learn.microsoft.com/...
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Public-data confirmation
+      options:
+        - label: This report contains no customer data, identifiers, endpoints, logs, screenshots, credentials, or diagnostic evidence.
+          required: true
