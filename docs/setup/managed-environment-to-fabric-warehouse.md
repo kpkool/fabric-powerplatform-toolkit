@@ -42,13 +42,13 @@ model and can require TCP `11000-11999` with redirect connection policy.
 
 Separate provisioning access from runtime data access.
 
-| Persona | Minimum responsibility and access |
-| --- | --- |
-| Power Platform administrator | Power Platform Administrator; manage the target environment and inspect or link the approved enterprise policy |
-| Azure network engineer | Network Contributor or an equivalent custom role when creating or changing network resources; read access is sufficient for inspection |
-| Fabric administrator or data owner | Manage Warehouse item access and grant or revoke granular SQL permissions |
-| Copilot Studio maker | Edit the agent, create or select the approved SQL connection, and run the acceptance action |
-| Runtime identity | Fabric item `Read` plus only the SQL permissions required by the action |
+| Persona                            | Minimum responsibility and access                                                                                                      |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Power Platform administrator       | Power Platform Administrator; manage the target environment and inspect or link the approved enterprise policy                         |
+| Azure network engineer             | Network Contributor or an equivalent custom role when creating or changing network resources; read access is sufficient for inspection |
+| Fabric administrator or data owner | Manage Warehouse item access and grant or revoke granular SQL permissions                                                              |
+| Copilot Studio maker               | Edit the agent, create or select the approved SQL connection, and run the acceptance action                                            |
+| Runtime identity                   | Fabric item `Read` plus only the SQL permissions required by the action                                                                |
 
 Microsoft documents Power Platform Administrator plus Network Contributor, or
 an equivalent custom role, for VNet setup. The administrator linking a policy
@@ -210,12 +210,12 @@ $targetStatus = `
 
 Route the result without guessing:
 
-| Target state | Action |
-| --- | --- |
-| Not linked | Validate the approved policy and both regions, then link it |
-| Linked to the approved policy | Do not relink; validate both regions |
-| Linked to another policy | Stop and confirm the intended architecture before changing it |
-| Status lookup fails | Retain the error; do not report VNet injection as disabled |
+| Target state                  | Action                                                        |
+| ----------------------------- | ------------------------------------------------------------- |
+| Not linked                    | Validate the approved policy and both regions, then link it   |
+| Linked to the approved policy | Do not relink; validate both regions                          |
+| Linked to another policy      | Stop and confirm the intended architecture before changing it |
+| Status lookup fails           | Retain the error; do not report VNet injection as disabled    |
 
 The script retries one known first-login `AccessToken` binding error only for
 the read-only status lookup. It never automatically retries `Enable` or
@@ -274,10 +274,10 @@ replacement for the service tags.
 Apply the equivalent of these outbound rules to every regional delegated subnet.
 Use approved priorities before any custom outbound deny.
 
-| Destination service tag | Protocol | Ports | Why |
-| --- | --- | --- | --- |
-| `PowerBI` | TCP | `443`, `1433` | Fabric and Power BI platform plus Warehouse TDS paths |
-| `Sql` | TCP | `1433` | Documented Warehouse SQL path |
+| Destination service tag | Protocol | Ports         | Why                                                   |
+| ----------------------- | -------- | ------------- | ----------------------------------------------------- |
+| `PowerBI`               | TCP      | `443`, `1433` | Fabric and Power BI platform plus Warehouse TDS paths |
+| `Sql`                   | TCP      | `1433`        | Documented Warehouse SQL path                         |
 
 ```powershell
 $nsgResourceGroup = '<network-resource-group>'
@@ -337,14 +337,14 @@ If a UDR sends traffic through a protocol-aware firewall, allow Warehouse TDS as
 `MSSQL:1433`, not `HTTPS:1433`. Do not apply HTTPS TLS inspection to the TDS
 connection.
 
-| Scope | Protocol | Destination FQDNs | Port |
-| --- | --- | --- | --- |
-| Warehouse TDS | `MSSQL` | `*.datawarehouse.fabric.microsoft.com`, `*.datawarehouse.pbidedicated.windows.net`, `*.datawarehouse.pbidedicated.microsoft.com`, `*.pbidedicated.windows.net`, `*.pbidedicated.microsoft.com` | `1433` |
-| Power BI APIs | `HTTPS` | `api.powerbi.com`, `*.analysis.windows.net`, `*.pbidedicated.windows.net` | `443` |
-| Power BI portal and Power Query | `HTTPS` | `*.powerbi.com`, `*.powerquery.microsoft.com`, `content.powerapps.com`, `gatewayadminportal.azure.com` | `443` |
-| Fabric portal | `HTTPS` | `*.fabric.microsoft.com` | `443` |
-| Power BI storage and telemetry | `HTTPS` | `*.blob.core.windows.net`, `dc.services.visualstudio.com` | `443` |
-| OneLake, when used | `HTTPS` | `*.onelake.dfs.fabric.microsoft.com`, `*.onelake.blob.fabric.microsoft.com` | `443` |
+| Scope                           | Protocol | Destination FQDNs                                                                                                                                                                              | Port   |
+| ------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| Warehouse TDS                   | `MSSQL`  | `*.datawarehouse.fabric.microsoft.com`, `*.datawarehouse.pbidedicated.windows.net`, `*.datawarehouse.pbidedicated.microsoft.com`, `*.pbidedicated.windows.net`, `*.pbidedicated.microsoft.com` | `1433` |
+| Power BI APIs                   | `HTTPS`  | `api.powerbi.com`, `*.analysis.windows.net`, `*.pbidedicated.windows.net`                                                                                                                      | `443`  |
+| Power BI portal and Power Query | `HTTPS`  | `*.powerbi.com`, `*.powerquery.microsoft.com`, `content.powerapps.com`, `gatewayadminportal.azure.com`                                                                                         | `443`  |
+| Fabric portal                   | `HTTPS`  | `*.fabric.microsoft.com`                                                                                                                                                                       | `443`  |
+| Power BI storage and telemetry  | `HTTPS`  | `*.blob.core.windows.net`, `dc.services.visualstudio.com`                                                                                                                                      | `443`  |
+| OneLake, when used              | `HTTPS`  | `*.onelake.dfs.fabric.microsoft.com`, `*.onelake.blob.fabric.microsoft.com`                                                                                                                    | `443`  |
 
 Apply only the HTTPS destinations used by traffic traversing this egress path,
 plus any linked identity or workload-specific required destinations in the
@@ -596,13 +596,13 @@ flowchart TD
 
 ## Acceptance Record
 
-| Gate | Required evidence | Owner |
-| --- | --- | --- |
-| Policy | Exact approved policy ARM ID, environment region, and successful operation history | Power Platform administrator |
-| Network | Validator exit code `0` and all regional DNS, TCP, TLS, CRL, and source-CIDR gates true | Azure network engineer |
-| Identity | Connection reference and observed SQL user match the approved runtime identity | Copilot Studio maker and Fabric owner |
-| Authorization | Item `Read` plus approved granular SQL grants, or explicitly approved `ReadData` | Fabric owner |
-| Application | Actual V2 action returns the expected bounded result | Copilot Studio maker |
+| Gate          | Required evidence                                                                       | Owner                                 |
+| ------------- | --------------------------------------------------------------------------------------- | ------------------------------------- |
+| Policy        | Exact approved policy ARM ID, environment region, and successful operation history      | Power Platform administrator          |
+| Network       | Validator exit code `0` and all regional DNS, TCP, TLS, CRL, and source-CIDR gates true | Azure network engineer                |
+| Identity      | Connection reference and observed SQL user match the approved runtime identity          | Copilot Studio maker and Fabric owner |
+| Authorization | Item `Read` plus approved granular SQL grants, or explicitly approved `ReadData`        | Fabric owner                          |
+| Application   | Actual V2 action returns the expected bounded result                                    | Copilot Studio maker                  |
 
 Do not declare the environment ready until every gate passes.
 
@@ -643,18 +643,18 @@ environment.
 
 ## Failure Routing
 
-| Evidence | Check next |
-| --- | --- |
-| Policy link missing | Link the exact approved enterprise policy |
-| Wrong environment region | Confirm the environment ID and required Azure region pair |
-| Regional context unavailable | Check policy allocation, subnet capacity, operation history, and correlation IDs |
-| DNS failed | Check VNet DNS, forwarding, zones, records, and the complete hostname |
-| TCP `1433` failed | Check effective NSG, UDR, firewall or NVA, service tags, MSSQL rule, and return path |
-| TLS failed after TCP passed | Check protocol handling, TLS inspection, public chain, and CRL or OCSP access |
-| Source CIDR mismatch | Check the linked policy, selected region, and runtime placement |
+| Evidence                         | Check next                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------ |
+| Policy link missing              | Link the exact approved enterprise policy                                            |
+| Wrong environment region         | Confirm the environment ID and required Azure region pair                            |
+| Regional context unavailable     | Check policy allocation, subnet capacity, operation history, and correlation IDs     |
+| DNS failed                       | Check VNet DNS, forwarding, zones, records, and the complete hostname                |
+| TCP `1433` failed                | Check effective NSG, UDR, firewall or NVA, service tags, MSSQL rule, and return path |
+| TLS failed after TCP passed      | Check protocol handling, TLS inspection, public chain, and CRL or OCSP access        |
+| Source CIDR mismatch             | Check the linked policy, selected region, and runtime placement                      |
 | Network passed, SQL login failed | Check authentication type, connection identity, item `Read`, and exact database name |
-| Login passed, query denied | Check granular SQL grants, `ReadData`, RLS, column security, and object name |
-| SQL works, Copilot action fails | Check data policy, connection reference, action inputs, capacity, and run evidence |
+| Login passed, query denied       | Check granular SQL grants, `ReadData`, RLS, column security, and object name         |
+| SQL works, Copilot action fails  | Check data policy, connection reference, action inputs, capacity, and run evidence   |
 
 ## Evidence and Privacy
 

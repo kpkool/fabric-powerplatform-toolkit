@@ -81,13 +81,13 @@ maps these responsibilities to the documented roles and permissions.
 
 ## Repository Map
 
-| Resource                                                                  | Mode           | Purpose                                                                                                 |
-| ------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------- |
-| [End-to-end setup](docs/setup/managed-environment-to-fabric-warehouse.md) | Guide          | Prerequisites, architecture, CLI-first setup, network rules, RBAC, validation, and failure routing      |
-| [Delegated subnet validator](delegated-subnet-validator/README.md)        | Read-only      | Test regional DNS, TCP, TLS, and source-CIDR placement; emit log and JSON evidence                      |
-| [VNet injection toggle](vnet-injection-toggle/README.md)                  | State-changing | Show, enable, or disable an environment's enterprise-policy link with confirmation and `-WhatIf`        |
-| [Contributing](CONTRIBUTING.md)                                           | Guide          | Propose changes, report defects, validate contributions, and protect customer data                      |
-| [Security policy](SECURITY.md)                                            | Guide          | Report security concerns without exposing them in a public issue                                        |
+| Resource                                                                  | Mode           | Purpose                                                                                            |
+| ------------------------------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------- |
+| [End-to-end setup](docs/setup/managed-environment-to-fabric-warehouse.md) | Guide          | Prerequisites, architecture, CLI-first setup, network rules, RBAC, validation, and failure routing |
+| [Delegated subnet validator](delegated-subnet-validator/README.md)        | Read-only      | Test regional DNS, TCP, TLS, and source-CIDR placement; emit log and JSON evidence                 |
+| [VNet injection toggle](vnet-injection-toggle/README.md)                  | State-changing | Show, enable, or disable an environment's enterprise-policy link with confirmation and `-WhatIf`   |
+| [Contributing](CONTRIBUTING.md)                                           | Guide          | Propose changes, report defects, validate contributions, and protect customer data                 |
+| [Security policy](SECURITY.md)                                            | Guide          | Report security concerns without exposing them in a public issue                                   |
 
 ## Acceptance Contract
 
