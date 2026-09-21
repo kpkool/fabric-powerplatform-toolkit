@@ -1,0 +1,25 @@
+%%{init: {"flowchart": {"nodeSpacing": 28, "rankSpacing": 36, "curve": "basis"}, "themeVariables": {"fontSize": "16px"}}}%%
+flowchart LR
+    Agent["Copilot Studio agent"] --> Connector["SQL Server connector"]
+    Connector --> Runtime["Power Platform VNet runtime"]
+
+    subgraph Policy["NetworkInjection enterprise policy"]
+        Primary["Delegated subnet<br/>primary Azure region"]
+        Paired["Delegated subnet<br/>paired Azure region"]
+    end
+
+    Runtime -->|"active region"| Primary
+    Runtime -.->|"failover region"| Paired
+    Primary --> Controls["DNS + NSG + UDR + firewall"]
+    Paired --> Controls
+    Controls -->|"MSSQL/TDS 1433"| Warehouse["Fabric Warehouse<br/>SQL endpoint"]
+    Identity["Microsoft Entra identity<br/>Fabric + SQL permissions"] -.-> Warehouse
+
+    classDef powerplatform fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b,stroke-width:1.5px;
+    classDef azure fill:#eff6ff,stroke:#2563eb,color:#172554,stroke-width:1.5px;
+    classDef fabric fill:#ecfdf5,stroke:#059669,color:#064e3b,stroke-width:1.5px;
+    classDef identity fill:#f8fafc,stroke:#475569,color:#0f172a,stroke-width:1.5px;
+    class Agent,Connector,Runtime powerplatform;
+    class Primary,Paired,Controls azure;
+    class Warehouse fabric;
+    class Identity identity;

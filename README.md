@@ -34,23 +34,9 @@ hostname and can require TCP `11000-11999`; that path is outside this guide.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    Agent[Copilot Studio agent] --> Connector[SQL Server connector]
-    Connector --> Runtime[Power Platform VNet runtime]
+![Power Platform to Fabric Warehouse connectivity architecture](docs/assets/connectivity-architecture.png)
 
-    subgraph Policy[NetworkInjection enterprise policy]
-        Primary[Delegated subnet<br/>primary Azure region]
-        Paired[Delegated subnet<br/>paired Azure region]
-    end
-
-    Runtime -->|active region| Primary
-    Runtime -.->|failover region| Paired
-    Primary --> Controls[DNS + NSG + UDR + firewall]
-    Paired --> Controls
-    Controls -->|MSSQL/TDS 1433| Warehouse[Fabric Warehouse<br/>SQL endpoint]
-    Identity[Microsoft Entra identity<br/>Fabric + SQL permissions] -.-> Warehouse
-```
+[View the editable Mermaid source](docs/assets/connectivity-architecture.mmd).
 
 For multiregion Power Platform geographies, both mapped Azure regions are part
 of the production path. Multiple environments can share one enterprise policy
