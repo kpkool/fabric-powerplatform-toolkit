@@ -72,10 +72,15 @@ maps these responsibilities to the documented roles and permissions.
 | [End-to-end setup](docs/setup/managed-environment-to-fabric-warehouse.md) | Guide          | Prerequisites, architecture, CLI-first setup, network rules, RBAC, validation, and failure routing |
 | [Delegated subnet validator](delegated-subnet-validator/README.md)        | Read-only      | Test regional DNS, TCP, TLS, and source-CIDR placement; emit log and JSON evidence                 |
 | [VNet injection toggle](vnet-injection-toggle/README.md)                  | State-changing | Show, enable, or disable an environment's enterprise-policy link with confirmation and `-WhatIf`   |
+| [Agent diagnostics](agent-diagnostics/README.md)                          | Probes         | HTTPS, MCP, Search, and offline response review; invocation requires explicit approval             |
 | [Contributing](CONTRIBUTING.md)                                           | Guide          | Propose changes, report defects, validate contributions, and protect customer data                 |
 | [Security policy](SECURITY.md)                                            | Guide          | Report security concerns without exposing them in a public issue                                   |
 
 ## Acceptance Contract
+
+The following contract applies to the Fabric SQL connectivity workflow. The
+independent [agent probes](agent-diagnostics/README.md) have narrower proof
+boundaries and do not deploy an agent or establish application acceptance.
 
 | Gate        | Required evidence                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------- |

@@ -14,6 +14,11 @@ The script follows the Microsoft-documented diagnostic flow:
 
 ## Prerequisites
 
+For a local-only tooling check before any sign-in, see the
+[private Search network preparation guide](../docs/setup/private-search-agent-network-preparation.md).
+The companion `Test-NetworkPreparationPrerequisites.ps1` only discovers local
+commands and modules; it does not validate an Azure or Power Platform environment.
+
 - Windows PowerShell 5.1 or PowerShell 7.
 - Power Platform Administrator permissions in the target tenant.
 - Read access to the Power Platform enterprise policy and delegated VNets.
