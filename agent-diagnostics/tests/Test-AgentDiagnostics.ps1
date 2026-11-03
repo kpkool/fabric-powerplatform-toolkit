@@ -48,8 +48,18 @@ foreach ($endpoint in @('http://example.invalid', 'https://example.invalid/?secr
                 if ($Headers['Mcp-Session-Id'] -ne 'synthetic-session') { throw 'Session not propagated.' }
                 return [pscustomobject]@{ StatusCode = 202; Code = 'HTTP_RESPONSE'; Data = $null; SessionId = $null }
             }
-            'tools/list' { $data = [pscustomobject]@{ result = [pscustomobject]@{ tools = @([pscustomobject]@{ name = 'synthetic_echo' }) } } }
-            'tools/call' { $data = [pscustomobject]@{ result = [pscustomobject]@{ content = @([pscustomobject]@{ type = 'text'; text = 'synthetic only' }) } } }
+            'tools/list' { $data = [pscustomobject]@{ result = [pscustomobject]@{ tools = @([pscustomobject]@{ name = 'synthetic_echo' }, [pscustomobject]@{ name = 'synthetic_blank' }, [pscustomobject]@{ name = 'synthetic_error' }) } } }
+            'tools/call' {
+                if ($Body.params.name -eq 'synthetic_blank') {
+                    $data = ('{"result":{"content":[],"isError":false}}' | ConvertFrom-Json)
+                }
+                elseif ($Body.params.name -eq 'synthetic_error') {
+                    $data = ('{"result":{"content":[{"type":"text","text":"controlled error"}],"isError":true}}' | ConvertFrom-Json)
+                }
+                else {
+                    $data = [pscustomobject]@{ result = [pscustomobject]@{ content = @([pscustomobject]@{ type = 'text'; text = 'synthetic only' }) } }
+                }
+            }
         }
         [pscustomobject]@{ StatusCode = 200; Code = 'HTTP_RESPONSE'; Data = $data; SessionId = 'synthetic-session' }
     }
@@ -57,12 +67,16 @@ foreach ($endpoint in @('http://example.invalid', 'https://example.invalid/?secr
     if ($result.Gates[-1].Code -ne 'DISCOVERY_ONLY') { throw 'Discovery called a tool.' }
     $result = Test-AgentMcpServer -Endpoint https://example.invalid/mcp -AllowToolCall -ToolName synthetic_echo -Confirm:$false
     if ($result.Status -ne 'PASSED') { throw 'Approved MCP call failed.' }
+    $result = Test-AgentMcpServer -Endpoint https://example.invalid/mcp -AllowToolCall -ToolName synthetic_blank -Confirm:$false
+    if ($result.Status -ne 'FAILED' -or $result.Gates[-1].Code -ne 'EMPTY_TOOL_CONTENT') { throw 'Empty MCP tool content was not flagged.' }
+    $result = Test-AgentMcpServer -Endpoint https://example.invalid/mcp -AllowToolCall -ToolName synthetic_error -Confirm:$false
+    if ($result.Status -ne 'FAILED' -or $result.Gates[-1].Code -ne 'TOOL_REPORTED_ERROR') { throw 'MCP tool error was not flagged.' }
     $result = Test-AgentMcpServer -Endpoint https://example.invalid/mcp -AllowToolCall -ToolName synthetic_echo -WhatIf
     if ($result.Gates[-1].Status -ne 'NOT_TESTED') { throw 'WhatIf invoked a tool.' }
     $result = Test-AgentHttpsEndpoint -Endpoint https://example.invalid
     if ($result.Gates[0].Status -ne 'PASSED' -or $result.Gates[1].Code -ne 'HTTP_401') { throw '401 conflated with unreachable endpoint.' }
 }
-$script:checks += 4
+$script:checks += 6
 
 & $module {
     foreach ($case in @(

@@ -277,12 +277,19 @@ function Test-AgentMcpServer {
                                 $result = Get-Field $response.Data 'result'
                                 if ((Get-Field $result 'isError') -eq $true) { $gate = New-Gate 'McpToolCall' 'FAILED' 'TOOL_REPORTED_ERROR' }
                                 else {
-                                    $hasContent = $null -ne (Get-Field $result 'structuredContent')
-                                    foreach ($content in @(Get-Field $result 'content')) {
-                                        if ((Get-Field $content 'type') -eq 'text') {
-                                            if (-not [string]::IsNullOrWhiteSpace((Get-Field $content 'text'))) { $hasContent = $true }
+                                    $structuredContent = Get-Field $result 'structuredContent'
+                                    $hasContent = $null -ne $structuredContent
+                                    $contentItems = Get-Field $result 'content'
+                                    if ($null -ne $contentItems -and $contentItems -is [array]) {
+                                        foreach ($content in $contentItems) {
+                                            $contentType = Get-Field $content 'type'
+                                            if ($contentType -eq 'text') {
+                                                if (-not [string]::IsNullOrWhiteSpace((Get-Field $content 'text'))) { $hasContent = $true }
+                                            }
+                                            elseif (-not [string]::IsNullOrWhiteSpace([string]$contentType)) {
+                                                $hasContent = $true
+                                            }
                                         }
-                                        elseif ($null -ne $content) { $hasContent = $true }
                                     }
                                     if (-not $hasContent) { $gate = New-Gate 'McpToolCall' 'FAILED' 'EMPTY_TOOL_CONTENT' }
                                 }
